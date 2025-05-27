@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/layout/navbar";
 import { HeroSection } from "@/components/landing/hero-section";
 import { FeaturedProducts } from  "@/components/landing/featured-products";
+import { Footer } from "@/components/layout/footer";
 import db from "@/clients/db";
 import { Product } from "@/schema/product";
 
@@ -30,6 +31,7 @@ export default async function Home() {
         products={products}
         bucketUrl={process.env.BUCKET_URL!}
       />
+      <Footer />
     </div>
   );
 }
