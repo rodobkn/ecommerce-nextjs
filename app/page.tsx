@@ -1,11 +1,35 @@
 import { Navbar } from "@/components/layout/navbar";
 import { HeroSection } from "@/components/landing/hero-section";
+import { FeaturedProducts } from  "@/components/landing/featured-products";
+import db from "@/clients/db";
+import { Product } from "@/schema/product";
 
-export default function Home() {
+export default async function Home() {
+
+  const productsSnapshot = await db.collection("products").get();
+  const products: Product[] = productsSnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      name: data.name,
+      description: data.description,
+      price: data.price,
+      pictureUrls: data.pictureUrls,
+      stock: data.stock,
+      category: data.category,
+      createdAt: data.createdAt.toDate(),
+      updatedAt: data.updatedAt.toDate(),
+    } as Product;
+  })
+
   return (
     <div>
       <Navbar />
       <HeroSection />
+      <FeaturedProducts
+        products={products}
+        bucketUrl={process.env.BUCKET_URL!}
+      />
     </div>
   );
 }
