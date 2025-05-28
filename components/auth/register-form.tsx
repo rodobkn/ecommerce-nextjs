@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { useState  } from "react";
+import { useState, useTransition  } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,10 +16,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { AuthCardWrapper } from "@/components/auth/auth-card-wrapper";
 import { FormError } from "@/components/errors/form-error";
+import { register } from "@/actions/auth/register";
 import { RegisterType } from "@/validation-types/auth-types";
 
 export const RegisterForm = () => {
   const [error, setError] = useState("");
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof RegisterType>>({
     resolver: zodResolver(RegisterType),
@@ -31,7 +33,19 @@ export const RegisterForm = () => {
   })
 
   const onSubmit = (values: z.infer<typeof RegisterType>) => {
-    console.log("Usuario registrandose con los siguientes values: ", values);
+    setError("");
+
+    startTransition(() => {
+      register(values)
+        .then((data) => {
+          if (data?.error) {
+            setError(data.error)
+          }
+        })
+        .catch((error) => {
+          setError("Algo salio mal")
+        })
+    })
   }
 
 
@@ -58,6 +72,7 @@ export const RegisterForm = () => {
                   <FormControl>
                     <Input
                       {...field}
+                      disabled={isPending}
                       placeholder="juanito"
                     />
                   </FormControl>
@@ -74,6 +89,7 @@ export const RegisterForm = () => {
                   <FormControl>
                     <Input
                       {...field}
+                      disabled={isPending}
                       placeholder="juanito@gmail.com"
                       type="email"
                     />
@@ -91,6 +107,7 @@ export const RegisterForm = () => {
                   <FormControl>
                     <Input
                       {...field}
+                      disabled={isPending}
                       placeholder="******"
                       type="password"
                     />
@@ -102,6 +119,7 @@ export const RegisterForm = () => {
           </div>
           <FormError message={error} />
           <Button
+            disabled={isPending}
             type="submit"
             className="w-full"
           >
