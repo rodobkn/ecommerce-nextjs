@@ -4,8 +4,11 @@ import { FeaturedProducts } from  "@/components/landing/featured-products";
 import { Footer } from "@/components/layout/footer";
 import db from "@/clients/db";
 import { Product } from "@/schema/product";
+import { getSecureUser } from "@/utils/server/auth/get-secure-user";
 
 export default async function Home() {
+  const secureUser = await getSecureUser();
+  console.log("secureUser: ", secureUser);
 
   const productsSnapshot = await db.collection("products").get();
   const products: Product[] = productsSnapshot.docs.map((doc) => {

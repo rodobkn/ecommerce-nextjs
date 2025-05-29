@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { useState  } from "react";
+import { useState, useTransition  } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,9 +17,11 @@ import { Button } from "@/components/ui/button";
 import { AuthCardWrapper } from "@/components/auth/auth-card-wrapper";
 import { FormError } from "@/components/errors/form-error";
 import { LoginType } from "@/validation-types/auth-types";
+import { login } from "@/actions/auth/login";
 
 export const LoginForm = () => {
   const [error, setError] = useState("");
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof LoginType>>({
     resolver: zodResolver(LoginType),
@@ -30,7 +32,19 @@ export const LoginForm = () => {
   })
 
   const onSubmit = (values: z.infer<typeof LoginType>) => {
-    console.log("Usuario iniciando sesion con los siguientes values: ", values);
+    setError("");
+
+    startTransition(() => {
+      login(values)
+        .then((data) => {
+          if (data?.error) {
+            setError(data.error)
+          }
+        })
+        .catch((error) => {
+          setError("Credenciales Invalidas o algo salió mal")
+        })
+    })
   }
 
   return (
@@ -56,6 +70,7 @@ export const LoginForm = () => {
                   <FormControl>
                     <Input
                       {...field}
+                      disabled={isPending}
                       placeholder="juanito@gmail.com"
                       type="email"
                     />
@@ -73,6 +88,7 @@ export const LoginForm = () => {
                   <FormControl>
                     <Input
                       {...field}
+                      disabled={isPending}
                       placeholder="******"
                       type="password"
                     />
@@ -84,6 +100,7 @@ export const LoginForm = () => {
           </div>
           <FormError message={error} />
           <Button
+            disabled={isPending}
             type="submit"
             className="w-full"
           >
