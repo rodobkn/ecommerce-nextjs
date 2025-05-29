@@ -8,7 +8,6 @@ import { getSecureUser } from "@/utils/server/auth/get-secure-user";
 
 export default async function Home() {
   const secureUser = await getSecureUser();
-  console.log("secureUser: ", secureUser);
 
   const productsSnapshot = await db.collection("products").get();
   const products: Product[] = productsSnapshot.docs.map((doc) => {
@@ -28,7 +27,9 @@ export default async function Home() {
 
   return (
     <div>
-      <Navbar />
+      <Navbar
+        user={secureUser}
+      />
       <HeroSection />
       <FeaturedProducts
         products={products}
