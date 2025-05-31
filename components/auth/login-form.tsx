@@ -42,7 +42,7 @@ export const LoginForm = () => {
           }
         })
         .catch((error) => {
-          setError("Credenciales Invalidas o algo salió mal")
+          setError("Credenciales Invalidas o te registraste con google/github o algo salió mal")
         })
     })
   }
