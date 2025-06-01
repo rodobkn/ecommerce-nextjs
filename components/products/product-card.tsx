@@ -1,6 +1,7 @@
 "use client";
 
 import { Product } from "@/schema/product";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   product: Product;
@@ -11,8 +12,10 @@ export const ProductCard = ({
   product,
   bucketUrl
 }: ProductCardProps) => {
+  const router = useRouter();
+
   const handleRedirect = () => {
-    console.log("Redireccionando al producto: ", product.name);
+    router.push(`/products/${product.id}`);
   }
 
   const formattedPrice = new Intl.NumberFormat("es-CL", {
