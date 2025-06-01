@@ -27,7 +27,8 @@
     "server-only": "^0.0.1",
     "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.25.31"
+    "zod": "^3.25.31",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
