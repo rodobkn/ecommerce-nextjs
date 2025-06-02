@@ -1,9 +1,11 @@
 "use client";
 
 import { Product } from "@/schema/product";
+import { CartItem } from "@/schema/cart-item";
 import { SecureUser } from "@/schema/user";
 import { redirectToRegister } from "@/actions/redirects/redirect-to-register";
 import { useState } from "react";
+import { useCartStore } from "@/stores/cart-store";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css"; // Importa estilos css de Swiper
 import "swiper/css/pagination"; // importa estilos css de pagination de swiper
@@ -21,14 +23,43 @@ export const ProductDetails = ({
   bucketUrl,
 }: ProductDetailsProps) => {
   const [currentImage, setCurrentImage] = useState(product.pictureUrls[0]);
+  const items = useCartStore((state) => state.items);
+  const addItem = useCartStore((state) => state.addItem);
 
-  const handleAddToCart = () => {
+  const possibleCartItem = items.find((item) => item.product.id === product.id);
+  const productQuantityInCart = possibleCartItem ? possibleCartItem.quantity : 0;
+
+  const handleAddToCart = async () => {
     if (!user) {
       redirectToRegister();
       return;
     }
-    console.log("Agregando el siguiente producto al carrito: ", product.name)
-  }
+
+    // Validar si el stock es suficiente antes de agregar
+    if (productQuantityInCart + 1 > product.stock) {
+      alert("No puedes agregar más de la cantidad disponible en stock");
+      return;
+    }
+
+    const cartItem: CartItem = {
+      product: {
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        pictureUrls: product.pictureUrls,
+        category: product.category
+      },
+      quantity: 1,
+      subtotal: product.price,
+    };
+
+    try {
+      await addItem(user.id, cartItem);
+    } catch (error) {
+      console.error("Error al agregar al carrito: ", error);
+    }
+  };
 
   const handleGoToCart = () => {
     console.log("Redirigiendo al carrito");
@@ -95,6 +126,19 @@ export const ProductDetails = ({
           >
             {product.stock > 0 ? "Agregar al carrito" : "Sin stock"}
           </button>
+          {productQuantityInCart > 0 && (
+            <p className="text-sm text-green-600 mt-2">
+              Ya tienes {productQuantityInCart} de este producto en tu carrito.
+            </p>
+          )}
+          {productQuantityInCart > 0 && (
+            <button
+              onClick={handleGoToCart}
+              className="w-full px-4 py-2 mt-4 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition"
+            >
+              Ir al carrito
+            </button>
+          )}
         </div>
       </div>
 
@@ -176,6 +220,19 @@ export const ProductDetails = ({
           >
             {product.stock > 0 ? "Agregar al carrito" : "Sin stock"}
           </button>
+          {productQuantityInCart > 0 && (
+            <p className="text-sm text-green-600 mt-2">
+              Ya tienes {productQuantityInCart} de este producto en tu carrito.
+            </p>
+          )}
+          {productQuantityInCart > 0 && (
+            <button
+              onClick={handleGoToCart}
+              className="w-full px-4 py-2 mt-4 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition text-center"
+            >
+              Ir al carrito
+            </button>
+          )}
         </div>
       </div>
 

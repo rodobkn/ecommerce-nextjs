@@ -2,6 +2,7 @@ import { Logo } from "@/components/layout/navbar-components/logo";
 import { SearchBar } from "@/components/layout/navbar-components/search-bar";
 import { UserSettings } from "@/components/auth/user-settings";
 import { SecureUser } from "@/schema/user";
+import { CartIcon } from "@/components/layout/navbar-components/cart-icon";
 
 interface NavbarProps {
   user: SecureUser | null;
@@ -18,6 +19,7 @@ export const Navbar = ({
         <div className="flex items-center justify-between px-2 py-3">
           <Logo />
           <div className="flex items-center space-x-4">
+            {user && <CartIcon user={user} />}
             <UserSettings user={user} />
           </div>
         </div>
@@ -31,6 +33,7 @@ export const Navbar = ({
         <Logo />
         <SearchBar />
         <div className="flex items-center space-x-4">
+          {user && <CartIcon user={user} />}
           <UserSettings user={user} />
         </div>
       </div>
