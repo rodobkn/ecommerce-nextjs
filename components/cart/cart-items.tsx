@@ -95,6 +95,7 @@ export const CartsItems = ({
                 ? "bg-red-400 cursor-not-allowed"
                 : "bg-red-600 hover:bg-red-700"
             }`}
+            disabled={isLoading}
           >
             Vaciar carrito
           </button>
