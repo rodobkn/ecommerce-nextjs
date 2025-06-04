@@ -21,7 +21,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const validateFields = LoginType.safeParse(credentials);
 
         if (validateFields.success) {
-          const email = credentials.email as string;
+          const email = (credentials.email as string).toLowerCase();
           const password = credentials.password as string;
           const userSnapshot = await db.collection("users").where("email", "==", email).limit(1).get();
           if (userSnapshot.empty) {

@@ -18,7 +18,9 @@ export const register = async (
     return { error: "Invalidad fields!" }
   }
 
-  const userSnapshot = await db.collection("users").where("email", "==", values.email).get();
+  const email = values.email.toLowerCase();
+
+  const userSnapshot = await db.collection("users").where("email", "==", email).get();
   if (!userSnapshot.empty) {
     return { error: "Ya esta usado el email" }
   }
@@ -27,7 +29,7 @@ export const register = async (
 
   const newUser: User = {
     id: "",
-    email: values.email,
+    email: email,
     name: values.name,
     hashedPassword,
     registrationMethod: RegistrationMethod.INTERNAL,
@@ -41,7 +43,7 @@ export const register = async (
   await userRef.set(newUser);
 
   await signIn("credentials", {
-    email: values.email,
+    email: email,
     password: values.password,
     redirectTo: "/"
   })
