@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { SecureUser } from "@/schema/user";
-// import { WebpayPayment } from "@/components/checkout/webpay-payment";
+import { WebpayPayment } from "@/components/checkout/webpay-payment";
 // import { MercadoPagoPayment } from "@/components/checkout/mercado-pago-payment";
 
 interface PaymentProviderSelectorProps {
@@ -69,9 +69,10 @@ export const PaymentProviderSelector = ({
       {/* Componente de Pago */}
       <div className="mt-6">
         {selectedProvider === "webpay" ? (
-          <div>
-            WebpayPayment Placeholder
-          </div>
+          <WebpayPayment
+            cart={user.cart}
+            userAddress={userAddress}
+          />
         ) : (
           <div>
             MercadoPagoPayment Placeholder
