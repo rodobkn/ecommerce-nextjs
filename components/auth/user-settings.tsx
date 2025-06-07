@@ -17,6 +17,8 @@ import {
 import { LogoutButton } from "@/components/auth/logout-button";
 import { redirectToRegister } from "@/actions/redirects/redirect-to-register";
 import { redirectToLogin } from "@/actions/redirects/redirect-to-login";
+import { redirectToOrders } from "@/actions/redirects/redirect-to-orders";
+import { redirectToPayments } from "@/actions/redirects/redirect-to-payments";
 import { SecureUser } from "@/schema/user";
 
 interface UserSettingsProps {
@@ -28,6 +30,8 @@ export const UserSettings = ({
 }: UserSettingsProps) => {
   const [isRegisterRedirectionPending, startRegisterRedirectionTransition] = useTransition();
   const [isLoginRedirectionPending, startLoginRedirectionTransition] = useTransition();
+  const [isOrdersRedirectionPending, startOrdersRedirectionTransition] = useTransition();
+  const [isPaymentsRedirectionPending, startPaymentsRedirectionTransition] = useTransition();
 
   const handleRegisterRedirection = () => {
     startRegisterRedirectionTransition(() => {
@@ -38,6 +42,18 @@ export const UserSettings = ({
   const handleLoginRedirection = () => {
     startLoginRedirectionTransition(() => {
       redirectToLogin();
+    })
+  }
+
+  const handleOrdersRedirection = () => {
+    startOrdersRedirectionTransition(() => {
+      redirectToOrders();
+    })
+  }
+
+  const handlePaymentsRedirection = () => {
+    startPaymentsRedirectionTransition(() => {
+      redirectToPayments();
     })
   }
 
@@ -90,16 +106,18 @@ export const UserSettings = ({
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onSelect={() => console.log("redireccionando a la pagina de órdenes")}
+          onSelect={handleOrdersRedirection}
+          disabled={isOrdersRedirectionPending}
         >
           <ShoppingBag className="mr-2 h-4 w-4" />
-          <span>Mis Órdenes</span>
+          <span>{isOrdersRedirectionPending ? "Cargando órdenes..." : "Mis Órdenes"}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
-          onSelect={() => console.log("redireccionando a la pagina de pagos")}
+          onSelect={handlePaymentsRedirection}
+          disabled={isPaymentsRedirectionPending}
         >
           <CreditCard className="mr-2 h-4 w-4" />
-          <span>Mis Pagos</span>
+          <span>{isPaymentsRedirectionPending ? "Cargando pagos..." : "Mis Pagos"}</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <LogoutButton />
