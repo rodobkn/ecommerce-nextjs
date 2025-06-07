@@ -28,7 +28,7 @@
     "swiper": "^11.2.1",
     "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "transbank-sdk": "^5.0.0",
+    "transbank-sdk": "^6.0.0",
     "zod": "^3.25.31",
     "zustand": "^5.0.3"
   },
