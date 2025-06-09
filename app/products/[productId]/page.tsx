@@ -3,6 +3,7 @@ import { Product } from "@/schema/product";
 import { ProductDetails } from "@/components/products/product-details";
 import { Navbar } from "@/components/layout/navbar";
 import { getSecureUser } from "@/utils/server/auth/get-secure-user";
+import { Review } from "@/schema/review";
 
 interface ProductPageProps {
   params: {
@@ -62,6 +63,28 @@ const ProductPage = async ({
     updatedAt: data.updatedAt.toDate(),
   }
 
+  const reviewsSnapshot = await db
+    .collection("reviews")
+    .where("productId", "==", productId)
+    .get()
+
+  const reviews: Review[] =reviewsSnapshot.docs
+    .map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        productId: data.productId,
+        userId: data.userId,
+        userName: data.userName,
+        rating: data.rating,
+        comment: data.comment,
+        createdAt: data.createdAt.toDate(),
+        updatedAt: data.updatedAt.toDate(),
+      }
+    })
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+
   return (
     <div className="bg-gray-100 min-h-screen">
       <Navbar
@@ -70,6 +93,7 @@ const ProductPage = async ({
       <ProductDetails
         product={product}
         user={secureUser}
+        reviews={reviews}
         bucketUrl={process.env.BUCKET_URL!}
       />
     </div>
