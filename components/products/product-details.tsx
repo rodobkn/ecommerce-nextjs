@@ -3,10 +3,12 @@
 import { Product } from "@/schema/product";
 import { CartItem } from "@/schema/cart-item";
 import { SecureUser } from "@/schema/user";
+import { Review } from "@/schema/review";
 import { redirectToRegister } from "@/actions/redirects/redirect-to-register";
 import { useState } from "react";
 import { useCartStore } from "@/stores/cart-store";
 import { useRouter } from "next/navigation"
+import { ProductReviews } from "@/components/reviews/product-reviews";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css"; // Importa estilos css de Swiper
 import "swiper/css/pagination"; // importa estilos css de pagination de swiper
@@ -15,12 +17,14 @@ import { Pagination } from "swiper/modules";
 interface ProductDetailsProps {
   product: Product;
   user: SecureUser | null;
+  reviews: Review[];
   bucketUrl: string;
 }
 
 export const ProductDetails = ({
   product,
   user,
+  reviews,
   bucketUrl,
 }: ProductDetailsProps) => {
   const [currentImage, setCurrentImage] = useState(product.pictureUrls[0]);
@@ -30,6 +34,14 @@ export const ProductDetails = ({
 
   const possibleCartItem = items.find((item) => item.product.id === product.id);
   const productQuantityInCart = possibleCartItem ? possibleCartItem.quantity : 0;
+
+  // Calcular el promedio de estrellitas de las reviews
+  const averageRating =
+    reviews.length > 0
+      ? Math.ceil(
+          reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+        )
+      : null;
 
   const handleAddToCart = async () => {
     if (!user) {
@@ -72,10 +84,24 @@ export const ProductDetails = ({
       {/* Diseño para pantallas pequeñas */}
       <div className="md:hidden">
         <h1
-          className={`text-2xl font-bold`}
+          className={`text-2xl font-bold ${
+            averageRating === null ? "mb-4" : "mb-1"
+          }`}
         >
           {product.name}
         </h1>
+        {averageRating !== null && (
+          <div className="flex items-center space-x-2 mb-3">
+            <div className="flex text-yellow-500 text-lg">
+              {Array.from({ length: 5 }, (_, index) => (
+                <span key={index}>
+                  {index < averageRating ? "★" : "☆"}
+                </span>
+              ))}
+            </div>
+            <span className="text-gray-600 text-sm">({reviews.length})</span>
+          </div>
+        )}
         <Swiper
           modules={[Pagination]}
           pagination={{ clickable: true }}
@@ -173,10 +199,27 @@ export const ProductDetails = ({
         {/* Detalles del producto y compra */}
         <div className="col-span-4 bg-white shadow-lg p-6 rounded-lg self-start">
           <h1
-            className={`text-2xl font-bold`}
+            className={`text-2xl font-bold ${
+              averageRating === null ? "mb-4" : "mb-1"
+            }`}
           >
             {product.name}
           </h1>
+
+          {/* Mostrar promedio de estrellas y número de reseñas */}
+          {averageRating !== null && (
+            <div className="flex items-center space-x-2 mb-2">
+              <div className="flex text-yellow-500 text-lg">
+                {Array.from({ length: 5 }, (_, index) => (
+                  <span key={index}>
+                    {index < averageRating ? "★" : "☆"}
+                  </span>
+                ))}
+              </div>
+              <span className="text-gray-600 text-sm">({reviews.length})</span>
+            </div>
+          )}
+
           <p className="text-xl font-semibold mb-4 flex items-center">
             {new Intl.NumberFormat("es-CL", {
               style: "currency",
@@ -242,6 +285,15 @@ export const ProductDetails = ({
       <div className="hidden md:block mt-10">
         <h2 className="text-xl font-bold mb-4">Descripción del Producto</h2>
         <p className="text-gray-700">{product.description}</p>
+      </div>
+      
+      <div className="mt-10">
+        <h2 className="text-xl font-bold mb-4">Reseñas</h2>
+        <ProductReviews
+          initialReviews={reviews}
+          productId={product.id}
+          user={user}
+        />
       </div>
 
     </div>
