@@ -3,9 +3,9 @@ import { Footer } from "@/components/layout/footer";
 import { getSecureUser } from "@/utils/server/auth/get-secure-user";
 
 interface PaymentFailurePageProps {
-  searchParams: {
+  searchParams: Promise<{
     reason?: string;
-  };
+  }>;
 }
 
 const PaymentFailurePage = async ({
@@ -14,7 +14,8 @@ const PaymentFailurePage = async ({
   const secureUser = await getSecureUser();
 
   // Mensaje de error del backend
-  const failureMessage: string = searchParams.reason || "El pago no fue autorizado.";
+  const { reason } = await searchParams;
+  const failureMessage = reason ?? "El pago no fue autorizado.";
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
