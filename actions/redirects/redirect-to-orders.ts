@@ -2,6 +2,6 @@
 
 import { redirect } from "next/navigation";
 
-export const redirectToOrders = () => {
+export const redirectToOrders = async () => {
   return redirect("/orders");
 }

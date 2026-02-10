@@ -2,6 +2,6 @@
 
 import { redirect } from "next/navigation";
 
-export const redirectToPayments = () => {
+export const redirectToPayments = async () => {
   return redirect("/payments");
 }

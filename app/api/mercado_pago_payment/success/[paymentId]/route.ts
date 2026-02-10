@@ -18,10 +18,10 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { paymentId: string } }
+  { params }: { params: Promise<{ paymentId: string }> }
 ) {
   try {
-    const { paymentId } = params;
+    const { paymentId } = await params;
     if (!paymentId) {
       const failureUrl = new URL(`${process.env.ORIGIN_URL}/payment-status/weird-failure`);
       failureUrl.searchParams.set("reason", MercadoPagoWeirdFailureReason.PAYMENT_ID_IN_URL_MISSING);
