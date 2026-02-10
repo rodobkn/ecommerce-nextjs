@@ -2,6 +2,6 @@
 
 import { redirect } from "next/navigation";
 
-export const redirectToRegister = () => {
+export const redirectToRegister = async () => {
   return redirect("/auth/register");
 }
