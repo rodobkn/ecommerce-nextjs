@@ -43,6 +43,9 @@ export const RegisterForm = () => {
           }
         })
         .catch((error) => {
+          if (error?.message === "NEXT_REDIRECT") {
+            return;
+          }
           setError("Algo salio mal")
         })
     })

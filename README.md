@@ -1,1 +1,1 @@
-node version project: v20.18.1
+node version project: v24.13.0

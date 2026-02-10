@@ -6,15 +6,15 @@ import { getSecureUser } from "@/utils/server/auth/get-secure-user";
 import { Review } from "@/schema/review";
 
 interface ProductPageProps {
-  params: {
+  params: Promise<{
     productId: string;
-  }
+  }>;
 }
 
 const ProductPage = async ({
   params
 }: ProductPageProps) => {
-  const { productId } = params;
+  const { productId } = await params;
   const secureUser = await getSecureUser();
 
   const productSnapshot = await db.collection("products").doc(productId).get();
